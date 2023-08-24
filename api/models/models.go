@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"time"
@@ -14,7 +14,7 @@ type User struct {
 	Name      string    `json:"name"`
 }
 
-func convertUserModelToExternal(dbUser database.User) User {
+func ConvertUserModelToExternal(dbUser database.User) User {
 	return User{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
@@ -32,7 +32,7 @@ type Feed struct {
 	UserId    uuid.UUID `json:"user_id"`
 }
 
-func convertFeedModelToExternal(dbFeed database.Feed) Feed {
+func ConvertFeedModelToExternal(dbFeed database.Feed) Feed {
 	return Feed{
 		ID:        dbFeed.ID,
 		CreatedAt: dbFeed.CreatedAt,
@@ -43,10 +43,10 @@ func convertFeedModelToExternal(dbFeed database.Feed) Feed {
 	}
 }
 
-func convertFeedModelsToExternal(dbFeeds []database.Feed) []Feed {
+func ConvertFeedModelsToExternal(dbFeeds []database.Feed) []Feed {
 	result := []Feed{}
 	for _, feed := range dbFeeds {
-		result = append(result, convertFeedModelToExternal(feed))
+		result = append(result, ConvertFeedModelToExternal(feed))
 	}
 	return result
 }
@@ -59,7 +59,7 @@ type FeedFollow struct {
 	FeedID    uuid.UUID `json:"feed_id"`
 }
 
-func convertFeedFollowModelToExternal(dbFeedFollow database.FeedFollow) FeedFollow {
+func ConvertFeedFollowModelToExternal(dbFeedFollow database.FeedFollow) FeedFollow {
 	return FeedFollow{
 		ID:        dbFeedFollow.ID,
 		CreatedAt: dbFeedFollow.CreatedAt,
@@ -67,4 +67,42 @@ func convertFeedFollowModelToExternal(dbFeedFollow database.FeedFollow) FeedFoll
 		UserID:    dbFeedFollow.UserID,
 		FeedID:    dbFeedFollow.FeedID,
 	}
+}
+
+type Post struct {
+	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Title       string    `json:"title"`
+	Description *string   `json:"description"`
+	PublishedAt time.Time `json:"published_at"`
+	Url         string    `json:"url"`
+	FeedID      uuid.UUID `json:"feed_id"`
+}
+
+func ConvertPostModelToExternal(dbPost database.Post) Post {
+
+	var description *string
+	if dbPost.Description.Valid {
+		description = &dbPost.Description.String
+	}
+
+	return Post{
+		ID:          dbPost.ID,
+		CreatedAt:   dbPost.CreatedAt,
+		UpdatedAt:   dbPost.UpdatedAt,
+		Title:       dbPost.Title,
+		Description: description,
+		PublishedAt: dbPost.PublishedAt,
+		Url:         dbPost.Url,
+		FeedID:      dbPost.FeedID,
+	}
+}
+
+func ConvertPostModelsToExternal(dbPosts []database.Post) []Post {
+	result := []Post{}
+	for _, post := range dbPosts {
+		result = append(result, ConvertPostModelToExternal(post))
+	}
+	return result
 }

@@ -1,6 +1,8 @@
-package main
+package api
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func handlerReadiness(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, 200, struct{}{})

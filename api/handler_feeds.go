@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rolginroman/aggregaterss/api/models"
 	"github.com/rolginroman/aggregaterss/internal/database"
 )
 
-func (apiConfig *apiConfig) handlerFeedCreate(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiConfig *ApiConfig) handlerFeedCreate(w http.ResponseWriter, r *http.Request, user database.User) {
 
 	type parameters struct {
 		Name string `json:"name"`
@@ -39,27 +40,27 @@ func (apiConfig *apiConfig) handlerFeedCreate(w http.ResponseWriter, r *http.Req
 		respondWithError(w, 400, fmt.Sprintf("Error creating feed: %v", err))
 		return
 	}
-	respondWithJSON(w, 201, convertFeedModelToExternal(createdFeed))
+	respondWithJSON(w, 201, models.ConvertFeedModelToExternal(createdFeed))
 }
 
-func (apiConfig *apiConfig) handlerFeedsByUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiConfig *ApiConfig) handlerFeedsByUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	feeds, err := apiConfig.DB.GetFeedsByUserId(r.Context(), user.ID)
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error retrieving feeds: %v", err))
 		return
 	}
-	respondWithJSON(w, 200, convertFeedModelsToExternal(feeds))
+	respondWithJSON(w, 200, models.ConvertFeedModelsToExternal(feeds))
 
 }
 
-func (apiConfig *apiConfig) handlerFeeds(w http.ResponseWriter, r *http.Request) {
+func (apiConfig *ApiConfig) handlerFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := apiConfig.DB.GetFeeds(r.Context())
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error retrieving feeds: %v", err))
 		return
 	}
-	respondWithJSON(w, 200, convertFeedModelsToExternal(feeds))
+	respondWithJSON(w, 200, models.ConvertFeedModelsToExternal(feeds))
 
 }

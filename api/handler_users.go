@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rolginroman/aggregaterss/api/models"
 	"github.com/rolginroman/aggregaterss/internal/database"
 )
 
-func (apiConfig *apiConfig) handlerUserCreate(w http.ResponseWriter, r *http.Request) {
+func (apiConfig *ApiConfig) handlerUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	type parameters struct {
 		Name string `json:"name"`
@@ -36,9 +37,9 @@ func (apiConfig *apiConfig) handlerUserCreate(w http.ResponseWriter, r *http.Req
 		respondWithError(w, 400, fmt.Sprintf("Error creating user: %v", err))
 		return
 	}
-	respondWithJSON(w, 201, convertUserModelToExternal(createdUser))
+	respondWithJSON(w, 201, models.ConvertUserModelToExternal(createdUser))
 }
 
-func (apiConfig *apiConfig) handlerUserGetByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
-	respondWithJSON(w, 200, convertUserModelToExternal(user))
+func (apiConfig *ApiConfig) handlerUserGetByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
+	respondWithJSON(w, 200, models.ConvertUserModelToExternal(user))
 }

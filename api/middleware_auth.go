@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 type authenticatedRequestHandler func(http.ResponseWriter, *http.Request, database.User)
 
-func (apiConfig *apiConfig) middlewareAuth(handler authenticatedRequestHandler) http.HandlerFunc {
+func (apiConfig *ApiConfig) middlewareAuth(handler authenticatedRequestHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		auth, error := auth.GetApiKey(r.Header)
 		if error != nil {

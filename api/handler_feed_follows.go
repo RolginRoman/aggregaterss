@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -8,10 +8,11 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+	"github.com/rolginroman/aggregaterss/api/models"
 	"github.com/rolginroman/aggregaterss/internal/database"
 )
 
-func (apiConfig *apiConfig) handlerFeedFollowCreate(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiConfig *ApiConfig) handlerFeedFollowCreate(w http.ResponseWriter, r *http.Request, user database.User) {
 
 	type parameters struct {
 		FeedId uuid.UUID `json:"feed_id"`
@@ -38,21 +39,21 @@ func (apiConfig *apiConfig) handlerFeedFollowCreate(w http.ResponseWriter, r *ht
 		respondWithError(w, 400, fmt.Sprintf("Error creating feed follow: %v", err))
 		return
 	}
-	respondWithJSON(w, 201, convertFeedFollowModelToExternal(createdFeedFollow))
+	respondWithJSON(w, 201, models.ConvertFeedFollowModelToExternal(createdFeedFollow))
 }
 
-func (apiConfig *apiConfig) handlerFeedFollowsByUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiConfig *ApiConfig) handlerFeedFollowsByUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	feeds, err := apiConfig.DB.GetFeedsForUser(r.Context(), user.ID)
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error retrieving feed follows: %v", err))
 		return
 	}
-	respondWithJSON(w, 200, convertFeedModelsToExternal(feeds))
+	respondWithJSON(w, 200, models.ConvertFeedModelsToExternal(feeds))
 
 }
 
-func (apiConfig *apiConfig) handlerFeedFollowDelete(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiConfig *ApiConfig) handlerFeedFollowDelete(w http.ResponseWriter, r *http.Request, user database.User) {
 
 	feedFollowIdString := chi.URLParam(r, "feedFollowId")
 	feedFollowId, err := uuid.Parse(feedFollowIdString)
